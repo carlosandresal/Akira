@@ -49,6 +49,7 @@ public class Akira.Layouts.Partials.FillItem : Gtk.Grid {
         owned get {
             return model.color;
         } set {
+            debug ("item color: %s", value);
             model.color = value;
 
             set_button_color ();
@@ -59,6 +60,7 @@ public class Akira.Layouts.Partials.FillItem : Gtk.Grid {
         owned get {
             return model.alpha;
         } set {
+            debug ("fills: set alpha in item %f", value);
             model.alpha = value;
 
             set_button_color ();
@@ -96,7 +98,6 @@ public class Akira.Layouts.Partials.FillItem : Gtk.Grid {
     }
 
     private void update_view () {
-        alpha = model.alpha;
         hidden = model.hidden;
         //  blending_mode = model.blending_mode;
         color = model.color;
@@ -160,11 +161,12 @@ public class Akira.Layouts.Partials.FillItem : Gtk.Grid {
         opacity_container = new Akira.Partials.InputField (
             Akira.Partials.InputField.Unit.PERCENTAGE, 7, true, true);
         opacity_container.entry.sensitive = true;
-        opacity_container.entry.text = (alpha * 100).to_string ();
+        opacity_container.entry.text = (alpha / 255 * 100).to_string ();
         opacity_container.entry.bind_property (
             "text", model, "alpha",
             BindingFlags.BIDIRECTIONAL | BindingFlags.SYNC_CREATE,
             (binding, srcval, ref targetval) => {
+                debug ("sync alpha from %s", srcval.get_string ());
                 double src = double.parse (srcval.dup_string ());
                 if (src > 100) {
                     opacity_container.entry.text = "100";
@@ -177,6 +179,7 @@ public class Akira.Layouts.Partials.FillItem : Gtk.Grid {
                 return true;
             }, (binding, srcval, ref targetval) => {
                 double src = (double) srcval;
+                debug ("sync alpha to %f", src);
                 targetval.set_string (("%0.1f").printf (src * 100));
                 return true;
             }
@@ -242,14 +245,17 @@ public class Akira.Layouts.Partials.FillItem : Gtk.Grid {
     }
 
     private void on_color_changed () {
-        var selected_color = color_chooser_widget.rgba;
+        var rgba = color_chooser_widget.rgba;
 
-        color = "#%02X%02X%02X".printf (
-            (int) (selected_color.red * 255),
-            (int) (selected_color.green * 255),
-            (int) (selected_color.blue * 255));
+        var hex = "#%02x%02x%02x"
+            .printf((int)(rgba.red   * 255),
+                    (int)(rgba.green * 255),
+                    (int)(rgba.blue  * 255));
 
-        alpha = selected_color.alpha;
+        debug ("fills: color choosed to hex: %s", hex);
+        color = hex;
+        debug ("fills: alpha choosed %f", alpha);
+        //alpha = rgba.alpha / 255;
     }
 
     private void on_model_changed () {
@@ -307,6 +313,7 @@ public class Akira.Layouts.Partials.FillItem : Gtk.Grid {
                     background-color: alpha (%s, %s);
                     border-color: alpha (shade (%s, 0.75), %s);
                 }""".printf (color, alpha_dot_separator, color, alpha_dot_separator);
+            debug ("fills: css %s", css);
 
             provider.load_from_data (css, css.length);
 

@@ -420,7 +420,7 @@ public class Akira.Lib.Canvas : Goo.Canvas {
         debug ("new height: %f", new_height);
 
         debug ("update y: %s", update_y.to_string ());
-        debug ("update x: %s", update_x.to_string ());
+        debug ("update x: %s", update_x.to_string());
 
         selected_item.set ("width", new_width, "height", new_height);
 
@@ -472,6 +472,10 @@ public class Akira.Lib.Canvas : Goo.Canvas {
         target.get ("x", out x, "y", out y);
 
         var item = (target as Goo.CanvasItemSimple);
+
+        var fills_list_model = window.main_window.left_sidebar.fill_box_panel.fills_list_model;
+        fills_list_model.clear ();
+        fills_list_model.add(item);
 
         var line_width = 1.0 / current_scale;
         var stroke = item.line_width / 2;
@@ -528,6 +532,10 @@ public class Akira.Lib.Canvas : Goo.Canvas {
         }
 
         select_effect.remove ();
+
+        var fills_list_model = window.main_window.left_sidebar.fill_box_panel.fills_list_model;
+        fills_list_model.clear ();
+
         select_effect = null;
         selected_item = null;
 
@@ -795,7 +803,10 @@ public class Akira.Lib.Canvas : Goo.Canvas {
 
     public void delete_selected () {
         if (selected_item != null) {
-            selected_item.remove ();
+            selected_item.remove();
+
+            var fills_list_model = window.main_window.left_sidebar.fill_box_panel.fills_list_model;
+            fills_list_model.clear ();
             var artboard = window.main_window.right_sidebar.layers_panel.artboard;
             Akira.Layouts.Partials.Layer layer = selected_item.get_data<Akira.Layouts.Partials.Layer?> ("layer");
             if (layer != null) {
@@ -808,6 +819,7 @@ public class Akira.Lib.Canvas : Goo.Canvas {
 
     public Goo.CanvasRect add_rect (Gdk.EventButton event) {
         var root = get_root_item ();
+        debug ("fill color %s", fill_color);
         var rect = new Goo.CanvasRect (null, event.x, event.y, 1, 1,
                                        "line-width", border_size,
                                        "radius-x", 0.0,
