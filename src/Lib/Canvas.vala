@@ -481,6 +481,7 @@ public class Akira.Lib.Canvas : Goo.Canvas {
         select_effect = new Goo.CanvasRect (null, real_x, real_y, 0, 0,
                                             "line-width", line_width,
                                             "stroke-color", "#666", null);
+        select_effect.set_data<bool> ("ignore", true);
 
         update_select_effect (target);
 
@@ -490,13 +491,15 @@ public class Akira.Lib.Canvas : Goo.Canvas {
 
         for (int i = 0; i < 9; i++) {
             var radius = i == 8 ? nob_size : 0;
-            nobs[i] = new Goo.CanvasRect (null, 0, 0, nob_size, nob_size,
+            var nob = new Goo.CanvasRect (null, 0, 0, nob_size, nob_size,
                                           "line-width", line_width,
                                           "radius-x", radius,
                                           "radius-y", radius,
                                           "stroke-color", "#41c9fd",
                                           "fill-color", "#fff", null);
-            nobs[i].set ("parent", get_root_item ());
+            nob.set ("parent", get_root_item ());
+            nob.set_data<bool> ("ignore", true);
+            nobs[i] = nob;
         }
 
         update_nob_position (target);
@@ -578,6 +581,7 @@ public class Akira.Lib.Canvas : Goo.Canvas {
         hover_effect = new Goo.CanvasRect (null, real_x, real_y, real_width, real_height,
                                            "line-width", line_width,
                                            "stroke-color", "#41c9fd", null);
+        hover_effect.set_data<bool> ("ignore", true);
         var transform = Cairo.Matrix.identity ();
         item.get_transform (out transform);
         hover_effect.set_transform (transform);
