@@ -178,6 +178,34 @@ public class Akira.Lib.Canvas : Goo.Canvas {
         grab_focus (get_root_item ());
     }
 
+    public void change_z_selected (bool raise, bool total) {
+        if (selected_item == null)
+            return;
+
+        //TODO: If next item is not touching selected one, raise effect is not shown.
+        //      Detect items upon selected to raise upon first one.
+        //TODO: If previous item is not touching selected one, lower effect is not shown.
+        //      Detect items behind selected to put behind first one.
+        var root_item = get_root_item ();
+        var pos_selected = root_item.find_child (selected_item);
+        if (pos_selected != -1) {
+            int target_item_pos;
+            if (total) {
+                target_item_pos = raise ? (root_item.get_n_children () - 1): 0;
+            } else {
+                target_item_pos = pos_selected + (raise ? 1 : -1);
+            }
+            var target_item = root_item.get_child (target_item_pos);
+            if (target_item != null) {
+                if (raise) {
+                    selected_item.raise (target_item);
+                } else {
+                    selected_item.lower (target_item);
+                }
+            }
+        }
+    }
+
     public Goo.CanvasItem? insert_object (Gdk.EventButton event) {
         udpate_default_values ();
 
