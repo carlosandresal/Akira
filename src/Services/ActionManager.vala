@@ -118,13 +118,10 @@ public class Akira.Services.ActionManager : Object {
     }
 
     private void action_open () {
-        var open_dialog = new Gtk.FileChooserDialog ("Open file",
+        var open_dialog = new Gtk.FileChooserNative ("Open file",
                                                      this as Gtk.Window,
                                                      Gtk.FileChooserAction.OPEN,
-                                                     Gtk.Stock.CANCEL,
-                                                     Gtk.ResponseType.CANCEL,
-                                                     Gtk.Stock.OPEN,
-                                                     Gtk.ResponseType.ACCEPT);
+                                                     "Open", "Cancel");
         add_filters (open_dialog);
         open_dialog.local_only = false; //allow for uri
         open_dialog.set_modal (true);
@@ -132,8 +129,8 @@ public class Akira.Services.ActionManager : Object {
         open_dialog.show ();
     }
 
-    void open_response_cb (Gtk.Dialog dialog, int response_id) {
-        var open_dialog = dialog as Gtk.FileChooserDialog;
+    void open_response_cb (Gtk.NativeDialog dialog, int response_id) {
+        var open_dialog = dialog as Gtk.FileChooserNative;
 
         switch (response_id) {
             case Gtk.ResponseType.ACCEPT:
@@ -221,7 +218,7 @@ public class Akira.Services.ActionManager : Object {
         }
     }
 
-    void save_as_response_cb (Gtk.Dialog dialog, int response_id) {
+    void save_as_response_cb (Gtk.NativeDialog dialog, int response_id) {
         var save_dialog = dialog as Gtk.FileChooserDialog;
 
         switch (response_id) {
@@ -302,14 +299,10 @@ public class Akira.Services.ActionManager : Object {
     }
 
     private void action_save_as (SimpleAction action, Variant? parameter) {
-        var save_dialog = new Gtk.FileChooserDialog ("Save canvas",
+        var save_dialog = new Gtk.FileChooserNative ("Save canvas",
                                                      this as Gtk.Window,
                                                      Gtk.FileChooserAction.SAVE,
-                                                     Gtk.Stock.CANCEL,
-                                                     Gtk.ResponseType.CANCEL,
-                                                     Gtk.Stock.SAVE,
-                                                     Gtk.ResponseType.ACCEPT);
-
+                                                     "Save", "Cancel");
         save_dialog.set_do_overwrite_confirmation (true);
         add_filters (save_dialog);
         save_dialog.set_modal (true);
